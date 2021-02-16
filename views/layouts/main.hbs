@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="format-detection" content="telephone=no">
+
+    <meta name="keywords" content="Muebles, Decoracion, Playa del Carmen">
+    <meta name="description" content="Prana es una empresa familiar establecida en Playa del Carmen, nos dedicamos a fabricar muebles y articulos de diseño.">
+
+    <link rel="stylesheet" href="/css/main.css">
+
+    <title>Prana</title>
+</head>
+<body>
+    <header id="header">
+
+        <div class="toggle" onclick="toggle()"></div>
+
+        <a href="/" class="logo">
+            <img alt="Prana">
+        </a>
+
+        <div class="h-list">
+            <a href="/articulos" class={{ main }} >Articulos</a>
+            <a href="/nosotros" class={{ us }} >Nosotros</a>
+            <a href="/contactanos" class={{ contact }} >Contactanos</a>
+        </div>
+
+        <div class="dark-area"></div>
+    </header>
+
+	<div id="body-container">
+		{{{ body }}}
+	</div>
+
+    <footer id="footer">
+        <div>
+            <h5>
+                <small>Copyright © 2020 | Prana.</small>
+            </h5>
+        </div>
+    </footer>
+
+    <script type="text/javascript">
+		const body = document.getElementById('body-container');
+		const header = document.getElementById("header");
+		const darkArea = document.querySelector(".dark-area");
+
+        function toggle(){
+            header.classList.toggle('active');
+            darkArea.classList.toggle('active');
+
+			const scrollY = document.documentElement.style.getPropertyValue('--scroll-y');
+			
+			body.style.position = 'fixed';
+			body.style.top = `-${scrollY}`;
+        }
+
+		darkArea.addEventListener('click', () => {
+			const scrollY = body.style.top;
+			body.style.position = '';
+			body.style.top = '';
+			window.scrollTo(0, parseInt(scrollY || '0') * -1);
+
+			header.classList.remove('active');
+			darkArea.classList.remove('active');
+		});
+
+
+		window.addEventListener('scroll', () => {
+			document.documentElement.style.setProperty('--scroll-y', `${window.scrollY}px`);
+		});
+    </script>
+</body>
+</html>

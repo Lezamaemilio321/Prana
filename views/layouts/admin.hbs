@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="/css/main.css">
+
+    <title>Prana</title>
+</head>
+<body>
+    <header id="header">
+
+        <div class="toggle" onclick="toggle()"></div>
+
+        <a href="/admin" class="logo">
+            <img alt="Prana">
+        </a>
+
+        <div class="h-list">
+            <a href="/admin/articulos" class="{{ services }} admin-list" >Articulos</a>
+            <a href="/admin/agregar" class="{{ us }} admin-list" >Agregar Articulos</a>
+        </div>
+
+        <div class="dark-area"></div>
+    </header>
+
+    {{{ body }}}
+
+    <footer id="footer">
+        <div>
+            <h5>
+                <small>Copyright © 2020 | Prana.</small>
+            </h5>
+        </div>
+    </footer>
+
+    <script type="text/javascript">
+        function toggle(){
+            const header = document.getElementById("header");
+            const darkArea = document.querySelector(".dark-area");
+            const body = document.body;
+
+            header.classList.toggle('active');
+            darkArea.classList.toggle('active');
+            body.classList.toggle('no-scroll');
+
+            darkArea.addEventListener('click', () => {
+                header.classList.remove('active');
+                darkArea.classList.remove('active');
+                body.classList.remove('no-scroll');
+            });
+        }
+    </script>
+</body>
+</html>

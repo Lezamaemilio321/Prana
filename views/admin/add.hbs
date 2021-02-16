@@ -1,0 +1,204 @@
+<section class="form-section">
+    <h1 class="title">Agregar Articulo</h1>
+    <br>
+    <hr>
+    <br>
+    <form action="/admin" method="POST" class="form" enctype="multipart/form-data">
+	
+		<label for="name">Nombre</label>
+		<div class="input-field">
+			<input class="add-input" class="input-area" type="text" name="name" required>
+		</div>
+
+		<br>
+
+		<label for="status">Estado</label>
+		<div class="input-field">
+			<div class="select-container">
+				<div>
+					<select class="add-input" name="status">
+						<option value="public" selected>Publico</option>
+						<option value="private">Privado</option>
+					</select>
+					<img src="/images/select-arrow.png" alt="seleccion">
+				</div>
+			</div>
+		</div>
+
+		<br>
+
+
+		<label>Detalles</label>
+		<div class="form-details-container"></div>
+		<div class="new-details-container">
+			<span class="container" id="details000">
+				<div>
+					<label for="measurments">Medidas:</label>
+					<input class="add-input" class="input-area" type="text" name="details000[measurments]" required>
+				</div>
+
+				<br>
+
+				<div>
+					<label for="type">Tipo:</label>
+					<input class="add-input" class="input-area" type="text" name="details000[type]" required>
+				</div>
+
+				<br>
+
+				<div>
+					<label for="price">Precio:</label>
+					<div style="width: 100%;">
+						<input onchange="quantityChanged(event)" class="add-input" type="number" name="details000[price]" required>
+					</div>
+				</div>
+			</span>
+		</div>
+
+		<script>
+            function quantityChanged(event) {
+                const input = event.target;
+
+                if (isNaN(input.value) || input.value <= 0){
+                    input.value = 1;
+                }
+            }
+		</script>
+		
+		<button type="button" class="new-details">
+			<img src="/images/add-icon.png" alt="agregar">
+		</button>
+
+
+		<br>
+
+		<div class="input-field" style="margin: 0">
+			<label style="margin-bottom: 10px;">Imagen</label>
+			{{#if error}}
+				<div class="error-class">{{ error }}</div>
+			{{/if}}
+			<input class="input-file" type="file" name="image" id="image"/>
+			<label for="image" id="file-label">Elige un archivo</label>
+		</div>
+
+        <br>
+        <br>
+
+        <div>
+            <input type="submit" value="Guardar" class="add-save-btn">
+        </div>
+    </form>
+</section>
+
+<script>
+    let fileInput = document.querySelector('.input-file');
+
+    fileInput.addEventListener('change', (event) => {
+
+        let fileName = event.target.value.split( '\\' ).pop();
+
+        if (fileName == '' || fileName === null) {
+            document.querySelector('#file-label').textContent = 'Elige un archivo';
+        } else {
+            document.querySelector('#file-label').textContent = fileName;
+        }
+    });
+
+	const newDetails = document.querySelector('.new-details');
+	const detailsForm = document.querySelector('.new-details-container').querySelector('.container').cloneNode(true);
+	const details = document.querySelector('.form-details-container');
+
+	newDetails.addEventListener('click', (event) => {
+		const inputsContainer = document.querySelector('.new-details-container').querySelector('.container');
+		const totalInputs = document.querySelector('.new-details-container').getElementsByTagName('span');
+
+		const newForm = detailsForm.cloneNode(true);
+		const randomId = Math.floor(Math.random() * 999);
+		newForm.id = "details" + randomId;
+
+		const oldInputs = inputsContainer.getElementsByTagName('input');
+		const inputName = oldInputs[0].getAttribute('name');
+
+		isFull = false;
+
+		for (let input of oldInputs) {
+			if (input.value == "") {
+				isFull = false;
+			} else {
+				isFull = true;
+			}
+		}
+
+		if (!isFull) {
+			return;
+		}
+
+		inputsContainer.classList.remove('container');
+		inputsContainer.classList.add('no-display');
+
+		const formInputs = newForm.getElementsByTagName('input');
+
+		function submitDetails(inputs, id) {
+			const newInputsContainer = document.createElement('div');
+			const submittedInputs = document.createElement('div');
+			const deleteButton = document.createElement('span');
+			const deleteImage = document.createElement('img');
+
+			newInputsContainer.classList.add('new-inputs-container');
+
+			submittedInputs.classList.add('new-inputs');
+
+			newInputsContainer.dataset.itemId = id;
+			deleteButton.dataset.deleteButtonId = id;
+
+
+			deleteImage.src = "/images/delete.png";
+			deleteImage.alt = "Borrar";
+
+			deleteButton.appendChild(deleteImage);
+
+			submittedInputs.innerHTML = (
+				`
+					<h3>Medidas: ${inputs[0].value}</h3>
+					<br>
+					<h3>Tipo: ${inputs[1].value}</h3>
+					<br>
+					<h3>Precio: $${inputs[2].value}</h3>
+				`
+			);
+			newInputsContainer.appendChild(submittedInputs);
+			details.appendChild(newInputsContainer);
+			submittedInputs.after(deleteButton);
+
+			deleteButton.addEventListener('click', (event) => {
+				const deletedItems = document.querySelector(`[data-item-id~="${event.currentTarget.dataset.deleteButtonId}"]`);
+				const deletedForm = document.getElementById(event.currentTarget.dataset.deleteButtonId);
+				deletedItems.parentNode.removeChild(deletedItems);
+				deletedForm.parentNode.removeChild(deletedForm);
+
+				newDetails.classList.remove('no-display');
+				document.querySelector('.new-details-container').classList.remove('no-display');
+
+			});
+
+			for (let input of formInputs) {
+				input.required = false;
+			}
+
+			if (totalInputs.length >= 10) {
+				newDetails.classList.add('no-display');
+				document.querySelector('.new-details-container').classList.add('no-display');
+				return;
+			}
+		}
+
+		for (let input of formInputs) {
+			const newInputName = input.getAttribute('name');
+			input.setAttribute('name', newInputName.slice(0, 7) + randomId + newInputName.slice(10));
+		}
+
+		submitDetails(oldInputs, inputsContainer.id);
+		inputsContainer.after(newForm);
+	});
+
+</script>
