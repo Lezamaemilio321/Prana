@@ -16,7 +16,7 @@ router.get("/", (req, res) => {
 router.get("/articulos", async (req, res) => {
     const items = await Item.find({ status: "public" }).lean();
 
-    res.render("items", { items: items, main: "active" });
+    res.render("items", { items: items.reverse(), main: "active" });
 });
 
 router.get("/nosotros", (req, res) => {

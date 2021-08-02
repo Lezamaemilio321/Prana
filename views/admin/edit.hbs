@@ -9,7 +9,7 @@
 	
 		<label for="name">Nombre</label>
 		<div class="input-field">
-			<input class="add-input" class="input-area" value={{ item.name }} type="text" id="name" name="name" required>
+			<input class="add-input" class="input-area" value='{{ item.name }}' type="text" id="name" name="name" required>
 		</div>
 
 		<br>
@@ -36,7 +36,7 @@
 
 		<br>
 
-		<label>Detalles</label>
+		<!-- <label>Detalles</label>
 		<div class="form-details-container">
 			{{#each item.details}}
 				{{ setVar "idNumber" @index (randomNumber) }}
@@ -140,9 +140,22 @@
 		
 		<button type="button" class="new-details">
 			<img src="/images/add-icon.png" alt="agregar">
-		</button>
+		</button> -->
 
 		<br>
+
+                <label for="status">Categoria</label>
+                <div class="input-field">
+                        <div class="select-container">
+                                <div>
+                                        {{{ renderEditCategories item.category}}}
+                                        <img src="/images/select-arrow.png" alt="seleccion">
+                                </div>
+                        </div>
+                </div>
+
+                <br>
+
 
 		<div class="input-field" style="margin: 0">
 			<label style="margin-bottom: 10px;">Imagen</label>

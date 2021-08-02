@@ -5,19 +5,43 @@ const path = require("path");
 const sharp = require("sharp");
 const fs = require("fs");
 const methodOverride = require("method-override");
-const basicAuth = require("express-basic-auth");
+const crypto = require('crypto');
 
 const Item = require("../models/Item");
 
 const router = express.Router();
 
 // Authentification
-router.use(
-    basicAuth({
-        users: { admin: process.env.ADMIN_PASSWORD },
-        challenge: true,
-    })
-);
+const authTokens = {};
+
+const getHashedPassword = (password) => {
+    const sha256 = crypto.createHash('sha256');
+    const hash = sha256.update(password).digest('base64');
+    return hash;
+}
+
+const generateAuthToken = () => {
+    return crypto.randomBytes(30).toString('hex');
+}
+
+router.use((req, res, next) => {
+    // Get auth token from the cookies
+    const authToken = req.cookies['AuthToken'];
+
+    // Inject the user to the request
+    req.user = authTokens[authToken];
+
+    next();
+});
+
+function Auth (req, res, next) {
+    if (req.user) {
+        next();
+    } else {
+        res.sendStatus(404);
+        return res.render("error/500");
+    }
+};
 
 // Set storage engine
 const storage = multer.diskStorage({
@@ -159,10 +183,34 @@ router.use(function (req, res, next) {
 // ROUTES
 
 router.get("/", async (req, res) => {
-    res.redirect("/admin/articulos");
+    if (req.user) {
+        return res.redirect("/admin/articulos");
+    } else {
+        res.render("admin/login");
+    }
 });
 
-router.get("/articulos", async (req, res) => {
+router.post("/login", async (req, res) => {
+    const { email, password } = req.body;
+    const hashedPassword = getHashedPassword(password);
+    const adminPassword = getHashedPassword(process.env.ADMIN_PASSWORD);
+
+    if (hashedPassword === adminPassword && email == "admin") {
+        const authToken = generateAuthToken();
+
+        authTokens[authToken] = email;
+
+        res.cookie('AuthToken', authToken);
+        return res.redirect('/admin');
+    } else {
+        res.render('admin/login', {
+            message: 'Usuario o contraseña invalidos',
+            messageClass: 'alert-danger'
+        });
+    }
+});
+
+router.get("/articulos", Auth, async (req, res) => {
     try {
         const items = await Item.find({}).lean();
 
@@ -175,14 +223,14 @@ router.get("/articulos", async (req, res) => {
     }
 });
 
-router.get("/agregar", (req, res) => {
+router.get("/agregar", Auth, (req, res) => {
     res.render("admin/add", {
         layout: "admin",
         error: req.flash("itemErr")[0],
     });
 });
 
-router.get("/editar/:id", async (req, res) => {
+router.get("/editar/:id", Auth, async (req, res) => {
     if (!req.params.id) {
         return res.render("error/404", { layout: "admin" });
     }
@@ -205,7 +253,7 @@ router.get("/editar/:id", async (req, res) => {
     }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", Auth, async (req, res) => {
     try {
         let requestBody = req.body;
 
@@ -319,7 +367,7 @@ router.post("/", async (req, res) => {
     }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", Auth, async (req, res) => {
     try {
         let existingItem = await Item.findById(
             mongoose.Types.ObjectId(req.params.id)
@@ -459,7 +507,7 @@ router.put("/:id", async (req, res) => {
     }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", Auth, async (req, res) => {
     try {
         const item = await Item.findById(
             mongoose.Types.ObjectId(req.params.id)

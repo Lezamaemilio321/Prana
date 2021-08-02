@@ -592,6 +592,7 @@ td {
     background: rgb(160, 160, 160);
     color: rgb(61, 60, 59);
     padding: 1rem 2rem;
+    margin-top: 20px;
     cursor: pointer;
     margin-bottom: 20px;
 }
@@ -640,7 +641,7 @@ td {
     margin-top: 10px;
 }
 
-.input-field .add-input {
+.select-container .add-input, .input-field .add-input {
     padding: 12px;
     border: 1px solid #ccc;
     background: rgba(255, 255, 255, 0);
@@ -648,6 +649,7 @@ td {
     width: 100%;
     min-width: 100px;
     max-width: 100%;
+    cursor: pointer;
 }
 
 .select-container {

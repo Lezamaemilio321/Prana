@@ -9,6 +9,7 @@ const session = require("express-session");
 const mongoose = require("mongoose");
 const MongoStore = require("connect-mongo")(session);
 const flash = require("connect-flash");
+const cookieParser = require('cookie-parser');
 
 const connectDB = require("./config/db");
 
@@ -24,6 +25,9 @@ app.use(flash());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+// To parse cookies from the HTTP Request
+app.use(cookieParser());
+
 // Handlebars Helpers
 const {
     checkEqual,
@@ -31,6 +35,9 @@ const {
     setVar,
     getVar,
     isTen,
+    renderItems,
+    renderAdminItems,
+    renderEditCategories
 } = require("./helpers/hbs");
 
 // Handlebars
@@ -44,6 +51,9 @@ app.engine(
             setVar,
             getVar,
             isTen,
+	    renderItems,
+	    renderAdminItems,
+	    renderEditCategories
         },
         defaultLayout: "main",
         extname: ".hbs",

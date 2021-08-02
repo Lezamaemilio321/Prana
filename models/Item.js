@@ -14,10 +14,14 @@ const ItemSchema = new mongoose.Schema({
         default: "public",
         enum: ["public", "private"],
     },
+    category: {
+        type: String,
+	default: "otros"
+    },
     image: {
         type: String,
         default: null,
-    },
+    }
 });
 
 module.exports = mongoose.model("Item", ItemSchema);

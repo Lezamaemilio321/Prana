@@ -1,106 +1,113 @@
-
-
 <section class="items-section">
 
-	<h1 class="title">Articulos</h1>
+        <h1 class="title">Articulos</h1>
     <br>
 
+    <hr style="margin: 10px">
+
+    <div class="select-container" style="margin: 0 0 15px 10px; min-width: 170px;">
+        <label for="category" style="font-size: 1.4rem; color: rgb(71, 71, 71); font-weight: 700; margin-bottom: 10px">Categorias</label>
+        <div style="margin-top: 10px">
+            <select class="category-select add-input" name="category" id="category" style="background: #fff;">
+                <option value="all" selected>Todos</option>
+                <option value="camas">Camas</option>
+                <option value="buros">Buros</option>
+                <option value="comodas">Comodas</option>
+                <option value="salas">Salas</option>
+                <option value="consolas">Consolas</option>
+                <option value="mueblestv">Muebles de TV</option>
+                <option value="comedores">Comedores</option>
+                <option value="sillas">Sillas</option>
+                <option value="libreros">Libreros</option>
+                <option value="escritorios">Escritorios</option>
+                <option value="macrame">Macrame</option>
+                <option value="lamparas">Lamparas</option>
+                <option value="deco">Decoración</option>
+                <option value="otros">Otros</option>
+            </select>
+            <img src="/images/select-arrow.png" alt="seleccion">
+        </div>
+    </div>
+
+
     <div class="items-grid">
-        {{#each items}}
-            <form class="item-card" action="/admin/{{ _id }}" method="POST" data-item-id={{ _id }}>
-				<input type="hidden" name="_method" value="DELETE">
-
-                <div style="width: 100%">
-                    <img src="{{ image }}" class="item-image" alt="servicio">
-                </div>
-
-				<div class="info-modal">
-					<div class="info-background"></div>
-					<div class="info-container">
-						<span class="close-button">&#10006;</span>
-
-						<div class="info-grid">
-							<div>
-								<img src="{{ image }}" alt="Imagen">
-							</div>
-							<div>
-								<h1><b>{{ name }}</b></h1>
-
-								<table>
-									<tbody>
-										<tr>
-											<th>Medidas</th>
-											<th>Tipo</th>
-											<th>Precio</th>
-										</tr>
-										{{#each details}}
-											<tr>
-												<td>{{ measurments }}</td>
-												<td>{{ type }}</td>
-												<td>${{ price }}</td>
-											</tr>
-										{{/each}}
-									</tbody>
-								</table>
-							</div>
-						</div>
-					</div>
-				</div>
-
-
-				<h1 class="item-name"><b>{{ name }}</b></h1>
-
-                <div style="margin-bottom: 20px;" class="info-button-container">
-                    <button type="button" class="info-button" id={{ _id }}>
-                        <h3><b>Detalles</b><h3>
-                    </button>
-                </div>
-
-				<a href="/admin/editar/{{ _id }}">
-					<button type="button" class="edit-button">
-						<h3><b>Editar</b></h3>
-					</button>
-				</a>
-
-				<button class="delete-button" type="submit">
-					<h3><b>Borrar Articulo</b></h3>
-				</button>
-
-            </form>
-        {{/each}}
+        {{{ renderAdminItems items "all" }}}
+        <script src="/js/script.js" class="refresh-script"></script>
+    </div>
     </div>
 
 </section>
 
 <script>
-	const infoButtons = document.querySelectorAll('.info-button');
-	const section = document.querySelector('.items-section');
+    const categorySelect = document.querySelector('.category-select');
+    const itemsGrid = document.querySelector('.items-grid');
 
-	for (let button of infoButtons) {
-		const card = document.querySelector(`[data-item-id~="${button.id}"]`);
-		const infoModal = card.querySelector('.info-modal');
-		const closeButton = infoModal.querySelector('.close-button');
-		const infoBackground = card.querySelector('.info-background');
+    const all = `{{{ renderAdminItems items "all" }}}`
+    const camas = `{{{ renderAdminItems items "camas" }}}`
+    const buros = `{{{ renderAdminItems items "buros" }}}`
+    const comodas = `{{{ renderAdminItems items "comodas" }}}`
+    const salas = `{{{ renderAdminItems items "salas" }}}`
+    const consolas = `{{{ renderAdminItems items "consolas" }}}`
+    const mueblestv = `{{{ renderAdminItems items "mueblestv" }}}`
+    const comedores = `{{{ renderAdminItems items "comedores" }}}`
+    const sillas = `{{{ renderAdminItems items "sillas" }}}`
+    const libreros = `{{{ renderAdminItems items "libreros" }}}`
+    const escritorios = `{{{ renderAdminItems items "escritorios" }}}`
+    const macrame = `{{{ renderAdminItems items "macrame" }}}`
+    const lamparas = `{{{ renderAdminItems items "lamparas" }}}`
+    const deco = `{{{ renderAdminItems items "deco" }}}`
+    const otros = `{{{ renderAdminItems items "otros" }}}`
 
-		button.addEventListener('click', (event) => {
-			const scrollY = document.documentElement.style.getPropertyValue('--scroll-y');
+    function checkCategory (event) {
+        switch (event.target.value) {
+            case 'all':
+                return all;
+            case 'camas':
+                return camas
+            case 'buros':
+                return buros
+            case 'comodas':
+                return comodas
+            case 'salas':
+                return salas
+            case 'consolas':
+                return consolas
+            case 'mueblestv':
+                return mueblestv
+            case 'comedores':
+                return comedores
+            case 'sillas':
+                return sillas
+            case 'libreros':
+                return libreros
+            case 'escritorios':
+                return escritorios
+            case 'macrame':
+                return macrame
+            case 'lamparas':
+                return lamparas
+            case 'deco':
+                return deco
+            case 'otros':
+                return otros
+            default:
+                return all;
+        }
+    }
 
-			infoModal.classList.add('active');
-			
-			section.style.position = 'fixed';
-			section.style.top = `-${scrollY}`;
-		});
-
-		function closeModal (event) {
-			const scrollY = section.style.top;
-			section.style.position = '';
-			section.style.top = '';
-			window.scrollTo(0, parseInt(scrollY || '0') * -1);
-
-			infoModal.classList.remove('active');
-		}
-
-		closeButton.addEventListener('click', closeModal);
-		infoBackground.addEventListener('click', closeModal);
-	}
+    categorySelect.addEventListener('change', (e) => {
+        let oldScript = itemsGrid.querySelector('.refresh-script');
+        if (oldScript) {
+                itemsGrid.removeChild(oldScript);
+        }
+        delete oldScript;
+        delete infoButtons;
+        delete section;
+        itemsGrid.innerHTML = (checkCategory(e));
+        let script = document.createElement('script');
+        script.setAttribute('src', '/js/script.js');
+        script.classList.add('refresh-script');
+        itemsGrid.appendChild(script);
+    });
 </script>
+
