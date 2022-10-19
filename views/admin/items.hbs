@@ -13,6 +13,9 @@
                 <option value="camas">Camas</option>
                 <option value="buros">Buros</option>
                 <option value="comodas">Comodas</option>
+	        <option value="espejos">Espejos</option>
+	        <option value="accesorios">Accesorios</option>
+	        <option value="mesascentro">Mesas de Centro</option>
                 <option value="salas">Salas</option>
                 <option value="consolas">Consolas</option>
                 <option value="mueblestv">Muebles de TV</option>
@@ -30,7 +33,7 @@
     </div>
 
 
-    <div class="items-grid">
+    <div class="items-container">
         {{{ renderAdminItems items "all" }}}
         <script src="/js/script.js" class="refresh-script"></script>
     </div>
@@ -40,12 +43,14 @@
 
 <script>
     const categorySelect = document.querySelector('.category-select');
-    const itemsGrid = document.querySelector('.items-grid');
-
+    const itemsGrid = document.querySelector('.items-container');
     const all = `{{{ renderAdminItems items "all" }}}`
     const camas = `{{{ renderAdminItems items "camas" }}}`
     const buros = `{{{ renderAdminItems items "buros" }}}`
     const comodas = `{{{ renderAdminItems items "comodas" }}}`
+    const espejos = `{{{ renderAdminItems items "espejos" }}}`
+    const accesorios = `{{{ renderAdminItems items "accesorios" }}}`
+    const mesascentro = `{{{ renderAdminItems items "mesascentro" }}}`
     const salas = `{{{ renderAdminItems items "salas" }}}`
     const consolas = `{{{ renderAdminItems items "consolas" }}}`
     const mueblestv = `{{{ renderAdminItems items "mueblestv" }}}`
@@ -57,7 +62,6 @@
     const lamparas = `{{{ renderAdminItems items "lamparas" }}}`
     const deco = `{{{ renderAdminItems items "deco" }}}`
     const otros = `{{{ renderAdminItems items "otros" }}}`
-
     function checkCategory (event) {
         switch (event.target.value) {
             case 'all':
@@ -68,6 +72,12 @@
                 return buros
             case 'comodas':
                 return comodas
+            case 'espejos':
+                return espejos
+            case 'accesorios':
+                return accesorios
+            case 'mesascentro':
+                return mesascentro
             case 'salas':
                 return salas
             case 'consolas':
@@ -94,7 +104,6 @@
                 return all;
         }
     }
-
     categorySelect.addEventListener('change', (e) => {
         let oldScript = itemsGrid.querySelector('.refresh-script');
         if (oldScript) {

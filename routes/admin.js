@@ -38,8 +38,7 @@ function Auth (req, res, next) {
     if (req.user) {
         next();
     } else {
-        res.sendStatus(404);
-        return res.render("error/500");
+        res.redirect("/admin");
     }
 };
 
@@ -216,7 +215,7 @@ router.get("/articulos", Auth, async (req, res) => {
 
         res.render("admin/items", {
             layout: "admin",
-            items: items,
+            items: items.reverse(),
         });
     } catch (error) {
         console.log(error);
